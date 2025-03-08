@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akkusative Verben + Präposition</title>
+    <style>
+        h1{font-family:cursive
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            cursor: pointer;
+            background: lightblue;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .options button.correct {
+            background: green;
+            color: white;
+        }
+        .options button.wrong {
+            background: red;
+            color: white;
+        }
+        #next-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+        }
+        #result {
+            font-size: 22px;
+            font-weight: bold;
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Akkusativ Quiz</h1>
+        <div id="quiz">
+            <p class="question" id="question">Loading question...</p>
+            <div class="options" id="options"></div>
+            <button id="next-btn" onclick="nextQuestion()">Next</button>
+            <p id="result"></p>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Achten?", options: ["auf", "für", "über", "um"], answer: "auf" },
+            { question: "Sich anmelden?", options: ["auf", "für", "über", "um"], answer: "für" },
+            { question: "Antworten?", options: ["auf", "für", "über", "um"], answer: "auf" },
+            { question: "Aufpassen?", options: ["auf", "für", "über", "um"], answer: "auf" },
+            { question: "Sich ärgern?", options: ["auf/um", "auf", "über", "um"], answer: "über" },
+            { question: "Sich beschweren?", options: ["auf", "für", "über", "um"], answer: "über" },
+            { question: "Sich bewerben?", options: ["über", "für", "um/auf", "um"], answer: "auf/um" },
+            { question: "Bitten?", options: ["auf", "für", "über", "um"], answer: "um" },
+            { question: "Denken?", options: ["auf", "an", "über", "um"], answer: "an" },
+            { question: "Diskutieren?", options: ["auf", "für", "über", "um"], answer: "über" },
+            { question: "Sich engagieren?", options: ["auf", "für", "über", "um"], answer: "für" },
+            { question: "Sich entscheiden", options: ["auf", "für", "über", "um"], answer: "für" },
+            { question: "Sich entschuldigen?", options: ["auf", "für", "über", "um"], answer: "für" },
+            { question: "Sich erinneren?", options: ["auf", "für", "über", "an"], answer: "an" },
+            { question: "Sich freuen?", options: ["auf/um", "für", "über", "auf/über"], answer: "auf/über" },
+            { question: "Sich gewöhnen?", options: ["auf", "für", "an", "um"], answer: "an" },
+            { question: "Sich informieren?", options: ["auf", "für", "über", "um"], answer: "über" },
+            { question: "Sich interessieren?", options: ["auf", "für", "über", "um"], answer: "für" },
+            { question: "Sich kummern?", options: ["auf", "für", "über", "um"], answer: "um" },
+            { question: "Lacheln?", options: ["auf", "an", "über", "um"], answer: "über" },
+            { question: "Nachdenken?", options: ["auf", "für", "über", "an"], answer: "über" },
+            { question: "Reden?", options: ["auf", "für", "über", "um"], answer: "über" },
+            { question: "Sprecehn?", options: ["auf", "für", "über", "in"], answer: "über" },
+            { question: "Sich streiten?", options: ["auf", "für", "über", "um"], answer: "über" },
+            { question: "Sich unterhalten?", options: ["auf", "für", "über", "um"], answer: "über" },
+            { question: "Sich verlassen?", options: ["auf", "für", "über", "um"], answer: "auf" },
+            { question: "Sich verlieben?", options: ["auf", "für", "über", "in"], answer: "in" },
+            { question: "Sich vorbreiten?", options: ["auf", "für", "über", "um"], answer: "auf" },
+            { question: "Warten?", options: ["auf", "für", "über", "um"], answer: "auf" },
+           
+
+
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // Function to shuffle array elements (Fisher-Yates algorithm)
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+            }
+        }
+
+        // Shuffle the questions
+        shuffleArray(questions);
+
+        // Shuffle answers for each question
+        questions.forEach(q => shuffleArray(q.options));
+
+        function loadQuestion() {
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            const nextButton = document.getElementById("next-btn");
+
+            questionElement.textContent = questions[currentQuestionIndex].question;
+            optionsElement.innerHTML = "";
+
+            questions[currentQuestionIndex].options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(button, option);
+                optionsElement.appendChild(button);
+            });
+
+            nextButton.style.display = "none"; // Hide "Next" button at start
+        }
+
+        function checkAnswer(button, selectedOption) {
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            const buttons = document.querySelectorAll(".options button");
+
+            // Disable all buttons after choosing an answer
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (correctAnswer.includes(selectedOption)) {
+                button.classList.add("correct");
+                score++;
+            } else {
+                button.classList.add("wrong");
+                // Highlight the correct answer in green
+                buttons.forEach(btn => {
+                    if (btn.textContent === correctAnswer) {
+                        btn.classList.add("correct");
+                    }
+                });
+            }
+
+            document.getElementById("next-btn").style.display = "block"; // Show "Next" button
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                document.getElementById("quiz").innerHTML = `<p id="result">Quiz Over! Your score: ${score}/${questions.length}</p>`;
+            }
+        }
+
+        loadQuestion();
+    </script>
+
+</body>
+</html>
