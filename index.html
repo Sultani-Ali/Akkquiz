@@ -14,21 +14,37 @@
             background: #f4f4f4;
         }
         .container {
-            width: 50%;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        @media (max-width: 600px) {
+    width: 50%; /* Keep it for larger screens */
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    min-height: 70vh; /* Makes it take more space on big screens */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+       @media (max-width: 600px) {
     .container {
-        width: 90%; /* Adjusts width for small screens */
+        width: 100%; /* Full width */
+        height: 100vh; /* Full height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center vertically */
+        align-items: center; /* Center horizontally */
+        padding: 30px; /* More padding for better spacing */
     }
     h1 {
-        font-size: 22px; /* Adjusts heading size */
+        font-size: 26px; /* Make title larger */
+    }
+    .question {
+        font-size: 24px; /* Increase question size */
+        padding: 20px; /* Add spacing */
     }
 }
+
         .question {
             font-size: 20px;
             margin-bottom: 15px;
@@ -73,10 +89,18 @@
 
     <div class="container">
         <h1>Akkusativ Quiz</h1>
+        <p id="score-display" style="font-size: 18px; font-weight: bold; color: blue;">
+    Score: 0
+</p>
+
         <div id="quiz">
             <p class="question" id="question">Loading question...</p>
             <div class="options" id="options"></div>
             <button id="next-btn" onclick="nextQuestion()">Next</button>
+            <button id="retry-btn" onclick="retryQuestion()" style="display:none; margin-top: 10px; background: orange; color: white; padding: 10px; border: none; cursor: pointer;">
+    Retry
+</button>
+
             <p id="result"></p>
         </div>
     </div>
@@ -152,34 +176,41 @@
             nextButton.style.display = "none"; // Hide "Next" button at start
         }
 
-        function checkAnswer(button, selectedOption) {
-            const correctAnswer = questions[currentQuestionIndex].answer;
-            const buttons = document.querySelectorAll(".options button");
+       function checkAnswer(button, selectedOption) {
+    const correctAnswer = questions[currentQuestionIndex].answer;
+    const buttons = document.querySelectorAll(".options button");
+    const nextButton = document.getElementById("next-btn");
 
-            // Disable all buttons after choosing an answer
-            buttons.forEach(btn => btn.disabled = true);
+    if (correctAnswer.includes(selectedOption)) {
+        button.classList.add("correct");
+        score++;
+        document.getElementById("score-display").textContent = `Score: ${score}`; // Update score
+        buttons.forEach(btn => btn.disabled = true); // Disable buttons only on correct answer
+        nextButton.style.display = "block"; // Show "Next" button
+    } else {
+        button.classList.add("wrong");
+        document.getElementById("retry-btn").style.display = "block"; // Show "Retry" button
+    }
+}
+        function retryQuestion() {
+    const buttons = document.querySelectorAll(".options button");
 
-            if (correctAnswer.includes(selectedOption)) {
-                button.classList.add("correct");
-                score++;
-            } else {
-                button.classList.add("wrong");
-                // Highlight the correct answer in green
-                buttons.forEach(btn => {
-                    if (btn.textContent === correctAnswer) {
-                        btn.classList.add("correct");
-                    }
-                });
-            }
+    buttons.forEach(btn => {
+        btn.classList.remove("wrong");
+        btn.disabled = false; // Re-enable buttons
+    });
+    document.getElementById("next-btn").style.display = "none"; 
+    document.getElementById("retry-btn").style.display = "none"; // Hide Retry button
+}
 
-            document.getElementById("next-btn").style.display = "block"; // Show "Next" button
-        }
+
 
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
             } else {
+                document.getElementById("retry-btn").style.display = "none";
                 document.getElementById("quiz").innerHTML = `<p id="result">Quiz Over! Your score: ${score}/${questions.length}</p>`;
             }
         }
