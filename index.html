@@ -168,7 +168,7 @@
     if (correctAnswer.includes(selectedOption)) {
         button.classList.add("correct");
         score++;
-        document.getElementById("score-display").textContent = Score: ${score}; // Update score
+        document.getElementById("score-display").textContent = `Score: ${score}`; // Update score
         buttons.forEach(btn => btn.disabled = true); // Disable buttons only on correct answer
         nextButton.style.display = "block"; // Show "Next" button
     } else {
@@ -197,7 +197,7 @@
                 loadQuestion();
                 document.getElementById("retry-btn").style.display = "none";
             } else {
-                document.getElementById("quiz").innerHTML = <p id="result">Quiz Over! Your score: ${score}/${questions.length}</p>;
+                document.getElementById("quiz").innerHTML = `<p id="result">Quiz Over! Your score: ${score}/${questions.length}</p>`;
             }
         }
 
