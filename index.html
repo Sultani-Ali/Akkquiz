@@ -14,37 +14,21 @@
             background: #f4f4f4;
         }
         .container {
-    width: 50%; /* Keep it for larger screens */
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    min-height: 70vh; /* Makes it take more space on big screens */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-       @media (max-width: 600px) {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 600px) {
     .container {
-        width: 100%; /* Full width */
-        height: 100vh; /* Full height */
-        display: flex;
-        flex-direction: column;
-        justify-content: center; /* Center vertically */
-        align-items: center; /* Center horizontally */
-        padding: 30px; /* More padding for better spacing */
+        width: 90%; /* Adjusts width for small screens */
     }
     h1 {
-        font-size: 26px; /* Make title larger */
-    }
-    .question {
-        font-size: 24px; /* Increase question size */
-        padding: 20px; /* Add spacing */
+        font-size: 22px; /* Adjusts heading size */
     }
 }
-
         .question {
             font-size: 20px;
             margin-bottom: 15px;
@@ -184,7 +168,7 @@
     if (correctAnswer.includes(selectedOption)) {
         button.classList.add("correct");
         score++;
-        document.getElementById("score-display").textContent = `Score: ${score}`; // Update score
+        document.getElementById("score-display").textContent = Score: ${score}; // Update score
         buttons.forEach(btn => btn.disabled = true); // Disable buttons only on correct answer
         nextButton.style.display = "block"; // Show "Next" button
     } else {
@@ -199,8 +183,10 @@
         btn.classList.remove("wrong");
         btn.disabled = false; // Re-enable buttons
     });
-    document.getElementById("next-btn").style.display = "none"; 
+
     document.getElementById("retry-btn").style.display = "none"; // Hide Retry button
+    document.getElementById("next-btn").style.display = "none"; 
+
 }
 
 
@@ -209,9 +195,9 @@
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
-            } else {
                 document.getElementById("retry-btn").style.display = "none";
-                document.getElementById("quiz").innerHTML = `<p id="result">Quiz Over! Your score: ${score}/${questions.length}</p>`;
+            } else {
+                document.getElementById("quiz").innerHTML = <p id="result">Quiz Over! Your score: ${score}/${questions.length}</p>;
             }
         }
 
@@ -219,4 +205,4 @@
     </script>
 
 </body>
-</html>
+</html> here buddy is all ok?
